@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photography Mastery Dashboard</title>
+    <style>
+        :root {
+            --bg: #0f0f0f;
+            --card-bg: #1a1a1a;
+            --text: #e0e0e0;
+            --accent: #00d4ff;
+            --border: #333;
+            --tab-inactive: #252525;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px 20px;
+            background: linear-gradient(to bottom, #1a1a1a, var(--bg));
+        }
+
+        h1 { margin: 0; color: #fff; font-size: 2rem; letter-spacing: -1px; }
+        
+        .tab-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 30px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--bg);
+            padding: 15px 0;
+        }
+
+        .tab-button {
+            background: var(--tab-inactive);
+            color: #888;
+            border: 1px solid var(--border);
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            background: var(--accent);
+            color: #000;
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+        }
+
+        .content-section {
+            display: none;
+            padding: 0 20px 50px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .category-group { margin-bottom: 50px; }
+        .category-name {
+            color: var(--accent);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            border-left: 3px solid var(--accent);
+            padding-left: 15px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: border-color 0.3s;
+        }
+
+        .card:hover { border-color: #555; }
+
+        .photo-frame {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            background: #222;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-frame .upload-label {
+            font-size: 0.75rem;
+            color: #555;
+            text-align: center;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        .card-info { padding: 15px; }
+        .card-info h3 { margin: 0 0 5px 0; font-size: 1.1rem; color: #fff; }
+        .card-info p { margin: 0; font-size: 0.85rem; color: #888; line-height: 1.4; }
+
+        input[type="file"] { display: none; }
+
+        footer {
+            text-align: center;
+            padding: 60px;
+            color: #444;
+            border-top: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Photography Mastery</h1>
+    <p style="color: #666;">Track your progress through the lens</p>
+</header>
+
+<div class="tab-container">
+    <button class="tab-button active" onclick="openTab(event, 'genres-tab')">Photography Genres</button>
+    <button class="tab-button" onclick="openTab(event, 'comp-tab')">Composition Techniques</button>
+</div>
+
+<div id="genres-tab" class="content-section active">
+    <div id="genres-root"></div>
+</div>
+
+<div id="comp-tab" class="content-section">
+    <div id="comp-root"></div>
+</div>
+
+<footer>
+    Visual Checklist &bull; Keep Shooting
+</footer>
+
+<script>
+    /* 
+       =========================================
+       PHOTO DATABASE
+       Paste your image links here. 
+       Example: "Portrait": "images/my_shot.jpg",
+       =========================================
+    */
+    const photoDatabase = {
+        // --- Genres ---
+        "Portrait": "",
+        "Lifestyle": "",
+        "Landscape": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=60", // Example link
+        "Wildlife": "",
+        "Street": "",
+        "Architecture": "",
+        "Macro": "",
+        "Astrophotography": "",
+        
+        // --- Compositions ---
+        "Rule of Thirds": "https://images.unsplash.com/photo-1493246507139-91e8bef99c02?auto=format&fit=crop&w=600&q=60", // Example link
+        "Leading Lines": "",
+        "Golden Spiral": "",
+        "Centered Symmetry": "",
+        "Minimalist": ""
+        // You can add more titles here following the same format
+    };
+
+    const genresData = [
+        { cat: "People & Portraits", items: [
+            ["Portrait", "Capturing the personality and mood of an individual or group."],
+            ["Lifestyle", "Documenting people in 'real-life' situations in an artistic way."],
+            ["Fashion", "Focused on clothing, accessories, and beauty for commercial appeal."],
+            ["Glamour", "Emphasizing the allure and physical beauty of the subject."],
+            ["Boudoir", "Intimate, romantic, and typically private portraits."],
+            ["Wedding", "Documenting the events and portraits of a couple's big day."],
+            ["Family & Newborn", "Specialized posing and patience for domestic milestones."],
+            ["Candid", "Capturing subjects without their knowledge or without them posing."]
+        ]},
+        { cat: "Nature & Environment", items: [
+            ["Landscape", "Wide shots of the natural world, from mountains to deserts."],
+            ["Seascape", "A sub-genre focusing specifically on the ocean and coastline."],
+            ["Wildlife", "Capturing animals in their natural habitats."],
+            ["Macro", "Extreme close-ups of small subjects (insects, flowers, textures)."],
+            ["Underwater", "Exploring marine life or submerged portraits."],
+            ["Astrophotography", "Capturing the night sky, stars, and celestial events."],
+            ["Bird", "A highly technical niche of wildlife focusing on avian life."],
+            ["Cloudscape", "Focusing purely on sky formations and atmospheric light."]
+        ]},
+        { cat: "Urban & Architecture", items: [
+            ["Architecture", "The art of capturing buildings and structures."],
+            ["Real Estate", "Commercial shots designed to help sell or rent properties."],
+            ["Interior", "Focusing on the design and aesthetics of indoor spaces."],
+            ["Street", "Capturing the human condition in public places."],
+            ["Cityscape", "The 'landscape' equivalent for urban skylines."],
+            ["Urban Exploration", "Photographing abandoned or off-limits man-made structures."]
+        ]},
+        { cat: "Commercial & Object", items: [
+            ["Product", "Highlighting the features of a specific item for sale."],
+            ["Food", "Making dishes look appetizing for menus or social media."],
+            ["Still Life", "Arranging inanimate objects into an artistic composition."],
+            ["Advertising", "High-concept imagery designed to sell a brand or idea."],
+            ["Jewelry", "A technical niche requiring extreme focus on lighting and reflections."],
+            ["Stock", "Creating generic but high-quality images for licensing."]
+        ]},
+        { cat: "Action & Events", items: [
+            ["Sports", "Capturing fast-moving athletic events and peak emotions."],
+            ["Concert/Event", "Managing low-light and high-energy stage performances."],
+            ["Documentary", "Chronicling significant historical or everyday events."],
+            ["Photojournalism", "Telling a news story through a single, truthful image."],
+            ["War/Conflict", "Documenting the realities of combat and its aftermath."],
+            ["Adventure", "Combining landscape and sports (e.g., rock climbing or skiing)."]
+        ]},
+        { cat: "Technical & Artistic", items: [
+            ["Fine Art", "Photography created primarily as an expression of the artist's vision."],
+            ["Abstract", "Focusing on shapes, colors, and textures rather than a literal subject."],
+            ["Long Exposure", "Using slow shutter speeds to blur movement (water, light trails)."],
+            ["Infrared", "Using specialized film or sensors to see light invisible to the human eye."],
+            ["Black and White", "Focusing purely on contrast, light, and shadow."],
+            ["Double Exposure", "Merging two images into one for a surreal effect."],
+            ["Minimalist", "Using a sparse amount of components to create a strong impact."],
+            ["Composite", "Digitally stitching multiple photos together to create a new reality."],
+            ["Drone/Aerial", "Capturing the world from a 'bird's eye' perspective."]
+        ]}
+    ];
+
+    const compData = [
+        { cat: "Fundamental Structural Rules", items: [
+            ["Rule of Thirds", "Dividing frame into 3x3 grid and placing subjects on intersections."],
+            ["Golden Ratio", "A natural version of the rule of thirds based on 1:1.618."],
+            ["Golden Spiral", "Using Fibonacci spiral to lead the eye to the focal point."],
+            ["Centered Symmetry", "Placing the subject dead-center for formal stability."],
+            ["Horizontal Symmetry", "Splitting the frame into identical halves."]
+        ]},
+        { cat: "Geometry and Lines", items: [
+            ["Leading Lines", "Using roads or paths to point directly at the subject."],
+            ["Converging Lines", "Multiple lines meeting at a single vanishing point."],
+            ["Diagonal Lines", "Creating a sense of movement or instability."],
+            ["Horizontal Lines", "Evoking calm, stability, and the horizon."],
+            ["Vertical Lines", "Communicating power, growth, and strength."],
+            ["S-Curves", "Using winding shapes to create a graceful visual journey."],
+            ["Triangles", "Arranging three points of interest to create a 'closed loop'."],
+            ["Patterns & Repetition", "Using repeating shapes to create a sense of rhythm."],
+            ["Breaking Pattern", "Introducing an anomaly into a repetitive sequence."]
+        ]},
+        { cat: "Depth and Dimension", items: [
+            ["Overlapping", "Placing one object in front of another to show scale."],
+            ["Layering", "Creating distinct planes (Foreground, Midground, Background)."],
+            ["Frame in Frame", "Using a window or archway to frame the main subject."],
+            ["Atmospheric", "Making distant objects lighter or bluer."],
+            ["Forced Perspective", "Playing with scale to make small objects look huge."],
+            ["Shadow/Highlight", "Using light to define the 3D volume of an object."],
+            ["Diminishing Scale", "Objects getting smaller as they recede."]
+        ]},
+        { cat: "Directing Attention", items: [
+            ["Point of Interest", "Having one clear, undeniable subject."],
+            ["Simplification", "Removing clutter so only the subject remains."],
+            ["Negative Space", "Leaving large areas 'empty' to let the subject breathe."],
+            ["Isolating Subject", "Using shallow depth of field to 'pop' the subject."],
+            ["Color Contrast", "Using a bright color against a neutral background."],
+            ["Value Contrast", "Placing a dark object against a light background."],
+            ["Rule of Odds", "Grouping subjects in odd numbers (3, 5, 7)."],
+            ["Figure-to-Ground", "Ensuring subject stands out clearly from backdrop."]
+        ]},
+        { cat: "Advanced Techniques", items: [
+            ["Dutch Angle", "Tilting camera to create unease or disorientation."],
+            ["Motion Blur", "Purposely blurring a moving object to show speed."],
+            ["Juxtaposition", "Placing two opposing things together to tell a story."],
+            ["Fill the Frame", "Getting so close that subject touches all edges."],
+            ["Headroom", "Leaving the right space above a person’s head."],
+            ["Lead Room", "Leaving space in front of the direction they look."],
+            ["Rule of Space", "Leaving 'walking room' for a moving subject."],
+            ["High Angle", "Looking down to make subject look vulnerable."],
+            ["Low Angle", "Looking up to make subject look powerful."],
+            ["POV", "Shooting from the eye level of a specific character."],
+            ["Radial Balance", "Elements radiating out from a central point."],
+            ["L-Composition", "Using horizontal/vertical elements to form L-shape."],
+            ["Golden Triangle", "Dividing frame with diagonal and perpendicular lines."]
+        ]}
+    ];
+
+    function openTab(evt, tabName) {
+        let content = document.getElementsByClassName("content-section");
+        for (let i = 0; i < content.length; i++) {
+            content[i].classList.remove("active");
+        }
+        let buttons = document.getElementsByClassName("tab-button");
+        for (let i = 0; i < buttons.length; i++) {
+            buttons[i].classList.remove("active");
+        }
+        document.getElementById(tabName).classList.add("active");
+        evt.currentTarget.classList.add("active");
+        window.scrollTo(0,0);
+    }
+
+    function renderGrids(data, rootId) {
+        const root = document.getElementById(rootId);
+        data.forEach(group => {
+            const groupWrap = document.createElement('div');
+            groupWrap.className = 'category-group';
+            groupWrap.innerHTML = `<div class="category-name">${group.cat}</div>`;
+            
+            const grid = document.createElement('div');
+            grid.className = 'grid';
+            
+            group.items.forEach(item => {
+                const title = item[0];
+                const storageId = `img_${title.replace(/\s+/g, '_')}`;
+                
+                // Check code database first, then local storage
+                const hardcodedImg = photoDatabase[title];
+                const savedImg = localStorage.getItem(storageId);
+                const activeImg = hardcodedImg || savedImg;
+                
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="photo-frame" onclick="this.querySelector('input').click()">
+                        <input type="file" accept="image/*" onchange="handleUpload(this, '${storageId}')">
+                        ${activeImg ? `<img src="${activeImg}">` : `<div class="upload-label">CLICK OR EDIT CODE TO ADD<br><strong>${title}</strong><br>PHOTO</div>`}
+                    </div>
+                    <div class="card-info">
+                        <h3>${title}</h3>
+                        <p>${item[1]}</p>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+            groupWrap.appendChild(grid);
+            root.appendChild(groupWrap);
+        });
+    }
+
+    function handleUpload(input, storageId) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const parent = input.parentElement;
+                parent.innerHTML = `<input type="file" accept="image/*" onchange="handleUpload(this, '${storageId}')"><img src="${e.target.result}">`;
+                try {
+                    localStorage.setItem(storageId, e.target.result);
+                } catch (err) {
+                    console.warn("Storage full.");
+                }
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    renderGrids(genresData, 'genres-root');
+    renderGrids(compData, 'comp-root');
+</script>
+
+</body>
+</html>
