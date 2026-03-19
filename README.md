@@ -1,8 +1,31 @@
-# 📸 Photography Mastery Dashboard
+# 📸 Photography Reference Guide
 
-A comprehensive, interactive visual roadmap for photographers. This dashboard serves as a checklist and gallery for **43 Photography Genres** and **42 Composition Techniques**. 
+---
 
-This project is designed to help photographers "gamify" their learning process by capturing and displaying a unique photo for every major style and rule in the medium.
+## **Section 1: Photography Genres (43 Slots)**
+
+| Category | Genres |
+|----------|--------|
+| **People & Portraits** | Portrait, Lifestyle, Fashion, Glamour, Boudoir, Wedding, Family/Newborn, Candid |
+| **Nature** | Landscape, Seascape, Wildlife, Macro, Underwater, Astrophotography, Bird, Cloudscape |
+| **Urban** | Architecture, Real Estate, Interior, Street, Cityscape, Urbex |
+| **Commercial** | Product, Food, Still Life, Advertising, Jewelry, Stock |
+| **Action** | Sports, Concert/Event, Documentary, Photojournalism, War/Conflict, Adventure |
+| **Artistic** | Fine Art, Abstract, Long Exposure, Infrared, B&W, Double Exposure, Minimalist, Composite, Drone |
+
+---
+
+## **Section 2: Composition Techniques (42 Slots)**
+
+| Category | Techniques |
+|----------|-----------|
+| **Structure** | Rule of Thirds, Golden Ratio, Golden Spiral, Centered Symmetry, Horizontal/Vertical Symmetry |
+| **Geometry** | Leading Lines, Converging Lines, Diagonals, Horizontals, Verticals, S-Curves, Triangles, Pattern, Breaking Pattern |
+| **Depth** | Overlapping, Layering, Frame-in-Frame, Atmospheric Perspective, Forced Perspective, Shadow/Highlight, Diminishing Scale |
+| **Focus** | Point of Interest, Simplification, Negative Space, Isolation, Color Contrast, Value Contrast, Rule of Odds, Figure-to-Ground |
+| **Dynamic** | Dutch Angle, Motion Blur, Juxtaposition, Fill the Frame, Headroom, Lead Room, Rule of Space, High Angle, Low Angle, POV, Radial Balance, L-Composition, Golden Triangle |
+
+
 
 ## 🚀 Features
 
